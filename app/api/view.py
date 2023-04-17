@@ -18,6 +18,16 @@ class TaskUpdateView(APIView):
             return Response(serializer.errors, status=400)
 
 
+class ProjectUpdateView(APIView):
+    def put(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        serializer = ProjectSerializer(project, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=400)
+
 
 class TaskListView(APIView):
 
@@ -32,6 +42,7 @@ class DetailTaskView(APIView):
         objects = get_object_or_404(Task, pk=pk)
         serializer = TaskSerializer(objects)
         return Response(serializer.data)
+
 
 class DetailProjectView(APIView):
     def get(self, request, pk):
