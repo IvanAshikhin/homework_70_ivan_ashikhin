@@ -32,6 +32,12 @@ class DetailTaskView(APIView):
         serializer = TaskSerializer(objects)
         return Response(serializer.data)
 
+class DetailProjectView(APIView):
+    def get(self, request, pk):
+        objects = get_object_or_404(Project, pk=pk)
+        serializer = ProjectSerializer(objects)
+        return Response(serializer.data)
+
 
 class DeleteView(APIView):
     def delete(self, request, pk):
