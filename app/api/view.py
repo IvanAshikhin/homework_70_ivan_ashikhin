@@ -8,14 +8,15 @@ from webapp.models import Task, Project
 
 
 class TaskUpdateView(APIView):
-
-    def post(self, request, *args, **kwargs):
-        serializer = TaskSerializer(data=request.data)
+    def put(self, request, pk):
+        task = get_object_or_404(Task, pk=pk)
+        serializer = TaskSerializer(task, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=400)
+
 
 
 class TaskListView(APIView):
