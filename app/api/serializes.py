@@ -1,17 +1,6 @@
 from rest_framework import serializers
-from .models import Task, Project, Status, Type
 
-
-class TaskSerializer(serializers.ModelSerializer):
-    class TaskSerializer(serializers.ModelSerializer):
-        status = serializers.PrimaryKeyRelatedField(many=True, queryset=Status.objects.all(), read_only=True)
-        type = serializers.PrimaryKeyRelatedField(many=True, queryset=Type.objects.all(), read_only=True)
-
-        class Meta:
-            model = Task
-            fields = (
-                'id', 'summary', 'description', 'status', 'type', 'created_at', 'edit_time', 'is_deleted', 'project')
-            read_only_fields = ('id', 'is_deleted')
+from webapp.models import Type, Status, Task, Project
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -23,15 +12,29 @@ class ProjectSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'start_date', 'end_date')
 
 
-class StatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Status
-        fields = ('id', 'name')
-        read_only_fields = ('id',)
-
-
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Type
         fields = ('id', 'name')
         read_only_fields = ('id',)
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    status = serializers.PrimaryKeyRelatedField(read_only=True)
+    type = TypeSerializer(read_only=True, many=True)
+    project = ProjectSerializer(read_only=True)
+
+    class Meta:
+        model = Task
+        fields = (
+            'id', 'summary', 'description', 'status', 'type', 'created_at', 'edit_time', 'is_deleted', 'project')
+        read_only_fields = ('id', 'status', 'type', 'project', 'created_at', 'edit_time')
+
+
+class StatusSerializer(serializers.ModelSerializer):
+    task = TaskSerializer(read_only=True)
+
+    class Meta:
+        model = Status
+        fields = ('id', 'name', 'task')
+        read_only_fields = ('id', 'task')
