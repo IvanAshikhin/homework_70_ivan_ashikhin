@@ -30,3 +30,13 @@ class DetailTaskView(APIView):
         objects = get_object_or_404(Task, pk=pk)
         serializer = TaskSerializer(objects)
         return Response(serializer.data)
+
+
+class DeleteView(APIView):
+    def delete(self, request, pk):
+        task = get_object_or_404(Task, pk=pk)
+        task_pk = task.pk
+        task.delete()
+        data = {'task_pk': task_pk}
+        return Response(data)
+
