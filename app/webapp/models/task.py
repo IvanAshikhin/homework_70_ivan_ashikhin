@@ -14,7 +14,7 @@ class Task(models.Model):
     edit_time = models.DateTimeField(auto_now=False, null=True, verbose_name='Время редактирования')
     is_deleted = models.BooleanField(default=False)
     project = models.ForeignKey(Project, related_name='project', on_delete=models.PROTECT, verbose_name='Проект',
-                                default=1)
+                                default=1, null=True)
 
     def delete(self, using=None, keep_parents=False):
         self.is_deleted = True

@@ -1,9 +1,10 @@
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.serializes import TaskSerializer
-from webapp.models import Task
+from api.serializes import TaskSerializer, ProjectSerializer
+from webapp.models import Task, Project
 
 
 class TaskUpdateView(APIView):
@@ -40,3 +41,14 @@ class DeleteView(APIView):
         data = {'task_pk': task_pk}
         return Response(data)
 
+
+class DeleteViewProject(APIView):
+    def delete(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        tasks = Task.objects.filter(project=project)
+        for task in tasks:
+            task.project = None
+            task.save()
+        serializer = ProjectSerializer(project)
+        project.delete()
+        return Response(serializer.data)
